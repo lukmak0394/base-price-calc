@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base price calculator</title>
+</head>
+<body>
+    <form action="#" class="base-price-form">
+   
+        <label for="capacity">Capacity</label><br>
+        <input type="text" id="capacity" name="capacity"><br>
+
+        <label for="price">Sell Price</label><br>
+        <input type="text" id="price" name="price"><br>
+        
+        <label for="units"></label>
+        <select name="units" id="units">
+            <option value="">Select Units</option>
+            <option value="g-ml">g / ml</option>
+        </select>
+
+        <button type="submit" class="btn 
+        btn-light">Calculate</button>    
+    </form>
+    <button class="clear-btn btn btn-dark">Clear list</button>
+    <ol class="result-list"></ol>
+    
+
+    <script src="main.js"></script>
+</body>
+</html>
