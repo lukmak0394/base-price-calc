@@ -1,44 +1,72 @@
-// Selected whole form and added event listener to it
 const form = document.querySelector('.base-price-form');
 form.addEventListener('submit',Calculate);
 
-// lista ol, gdzie są widoczne wyniki działania
 let resultList = document.querySelector('.result-list');
 
-// Sprawdzamy czy w pamięci lokalnej istnieje obiekt 'results', jeżeli tak to do zmiennej results przypisujemy obiekt, jeżeli nie to przypisujemy pustą tablicę
 let results = JSON.parse(localStorage.getItem('results')) ? JSON.parse(localStorage.getItem('results')) : [] ;
 
-// Wywołanie funkcji tworzącej elementy listy, aby były widoczne po załadowaniu strony
+let weightsSum = [];
+
 createElements();
 
-// Obliczenia
 function Calculate(event) {
     event.preventDefault();
 
     const capacity = document.querySelector('#capacity').value;
     const price = document.querySelector('#price').value;
+    const units = document.querySelector('#units').value;
 
-    let result = (price / capacity) * 100;
-    
-    // Szybka walidacja czy pola formularza nie są puste
+    let errorMsg = document.querySelector('.error-msg');
+
+    let result = 0;
+
     let validationErrors = 0;
-    if (capacity.trim() === '') {
+
+    if (capacity.trim() === '' || capacity <= 0) {
         validationErrors += 1;
-    }   else if (price.trim() === '') {
+        document.querySelector('#capacity').classList.add('input-error');
+    }
+
+    if (price.trim() === '' || price <= 0) {
+        validationErrors += 1;
+        document.querySelector('#price').classList.add('input-error');
+    };
+
+    if (units === '') {
         validationErrors += 1;
     };
+
+    if (isNaN(capacity) === true || isNaN(price) === true) {
+        validationErrors += 1; 
+    };
+
+    if (validationErrors !== 0) {
+        errorMsg.innerText = "Highlighted fields can't be blank, can't contain less than 1 character and must include numbers only."
+    };
     
-    // Jeżeli nie ma błędów związanych z walidacją: 
     if (validationErrors === 0) {
-        // Wynik działania idzie do tablicy
+
+        if (units === 'g-ml') {
+            result = (price / capacity) * 100;
+        };
+        if (units === 'kg-l') {
+            result = price / capacity;
+        };
+
         results.push(result);
-        // Przerabiamy tablicę z wynikami na obiekt JSON, który umieszczamy w pamięci lokalnej
         localStorage.setItem('results',JSON.stringify(results));
-        // Wywołanie funkcji tworzącej elementy
         createElements();
-        // Wyczyszczenie pól formularza
         document.querySelector('#capacity').value = '';
         document.querySelector('#price').value = '';
+
+        document.querySelector('.error-msg').innerText = "";
+
+        if (document.querySelector('#capacity').classList.contains('input-error')) {
+            document.querySelector('#capacity').classList.remove('input-error');
+        };
+        if (document.querySelector('#price').classList.contains('input-error')) {
+            document.querySelector('#price').classList.remove('input-error');
+        };
     };
 };
 
@@ -48,7 +76,6 @@ function createElements() {
 
     for (let i = 0; i < results.length; i++) {
         let newListItem = document.createElement('li');
-        // Wartość w list-itemach to wartość n-tego elementu tablicy z wynikami zaokrąglona do 2 miejsc po przecinku
         let listItemContent = document.createTextNode(parseFloat(results[i]).toFixed(2));
         let listItemClass = document.createAttribute('class');
         listItemClass.value = 'list-item';
@@ -56,13 +83,51 @@ function createElements() {
 
         newListItem.appendChild(listItemContent);
         resultList.appendChild(newListItem);
+
     };
 
 };
     
-document.querySelector('.clear-btn').addEventListener('click',function() {
+document.querySelector('#clear-list-btn').addEventListener('click',function() {
     localStorage.setItem('results',null);
     resultList.innerHTML = '';
     results = [];
 });
+
+document.querySelector('.weight-sum-form').addEventListener('submit',function(event) {
+    event.preventDefault();
+
+    const sumParagraph = document.querySelector('#sum-paragraph');
+
+    let sum = 0;
+
+    if (document.querySelector('#weight').value.trim() === '' || document.querySelector('#weight').value <= 0){
+        document.querySelector('#weight').classList.add('input-error');
+    } else if (isNaN(document.querySelector('#weight').value) === true) {
+        document.querySelector('#weight').classList.add('input-error');
+    }
+    else {
+        weightsSum.push(document.querySelector('#weight').value);
+
+        for (let i = 0; i < weightsSum.length; i++) {
+            sum += parseInt(weightsSum[i]);
+            sumParagraph.innerText = 'Sum: ' + sum;
+        };
+
+        if (document.querySelector('#weight').classList.contains('input-error')) {
+            document.querySelector('#weight').classList.remove('input-error');
+        };
+    };
+    
+    document.querySelector('#weight').value = '';
+});
+
+document.querySelector('#clear-sum-btn').addEventListener('click',function() {
+    document.querySelector('#sum-paragraph').innerText = '';
+    weightsSum = [];
+});
+
+
+
+
 
