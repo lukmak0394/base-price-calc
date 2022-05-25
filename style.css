@@ -13,6 +13,9 @@ body {
     background-color: #f4f4f4;
 }
 
+ol {
+    list-style: none;
+}
 
 .container {
     height: 100vh;
@@ -133,6 +136,9 @@ select:focus {
     padding: 2px 0;
 }
 
+#sum-paragraph {
+    padding: 8px 0;
+}
 
 @media screen and (max-width: 767px) {
     form,
