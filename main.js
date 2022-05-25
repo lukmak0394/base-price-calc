@@ -110,7 +110,7 @@ document.querySelector('.weight-sum-form').addEventListener('submit',(e) => {
         for (let i = 0; i < weightsSum.length; i++) {
             sum += parseFloat(weightsSum[i]);
             sumParagraph.innerText = `Sum of weights: ${sum}`;
-            
+            capacity.value = sum;
         };
 
         if (weight.classList.contains('input-error')) {
